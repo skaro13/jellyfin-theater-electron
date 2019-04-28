@@ -141,6 +141,7 @@
 
     function onMinimize() {
         onWindowStateChanged('Minimized');
+        mainWindow.setFullScreen(false);
     }
 
     function onRestore() {
@@ -155,7 +156,8 @@
     }
 
     function onMaximize() {
-        onWindowStateChanged('Maximized');
+        onWindowStateChanged('Fullscreen');
+        mainWindow.setFullScreen(true);
     }
 
     function onEnterFullscreen() {
@@ -850,6 +852,10 @@
         var isWindows = require('is-windows');
         var windowStatePath = getWindowStateDataPath();
         var enableNodeIntegration = getAppUrl() ? false : true
+        const ret = electron.globalShortcut.register('Escape', function(){
+            onMinimize();
+        });
+
         var previousWindowInfo;
         try {
             previousWindowInfo = JSON.parse(require("fs").readFileSync(windowStatePath, 'utf8'));
@@ -864,10 +870,7 @@
             title: 'Jellyfin Theater',
             minWidth: 1280,
             minHeight: 720,
-            //alwaysOnTop: true,
-            //skipTaskbar: isWindows() ? false : true,
-
-            //show: false,
+            autoHideMenuBar: true,
             backgroundColor: '#00000000',
             center: true,
             show: false,
@@ -958,5 +961,10 @@
                 mainWindow.setAlwaysOnTop(true);
             }
         });
+    });
+
+    app.on('will-quit', function(){
+        electron.globalShortcut.unregister('Escape');
+        electron.globalShortcut.unregisterAll();
     });
 })();
