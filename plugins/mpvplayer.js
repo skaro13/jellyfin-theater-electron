@@ -152,22 +152,10 @@ define(['globalize', 'apphost', 'playbackManager', 'pluginManager', 'events', 'e
                 Type: 'Video'
             });
 
-            var apiClient = item && item.ServerId ? connectionManager.getApiClient(item.ServerId) : null;
-            var supportsEmptyContainer = apiClient ? apiClient.isMinServerVersion('3.2.60.1') : false;
-
-            if (supportsEmptyContainer) {
-                // leave container null for all
-                profile.DirectPlayProfiles.push({
-                    Type: 'Audio'
-                });
-            }
-            else {
-                // for older servers that don't support leaving container blank
-                profile.DirectPlayProfiles.push({
-                    Container: 'aac,mp3,mpa,wav,wma,mp2,ogg,oga,webma,ape,opus,alac,flac,m4a',
-                    Type: 'Audio'
-                });
-            }
+            // leave container null for all
+            profile.DirectPlayProfiles.push({
+                Type: 'Audio'
+            });
 
             profile.TranscodingProfiles = [];
 
@@ -219,6 +207,10 @@ define(['globalize', 'apphost', 'playbackManager', 'pluginManager', 'events', 'e
             });
             profile.SubtitleProfiles.push({
                 Format: 'ass',
+                Method: 'External'
+            });
+            profile.SubtitleProfiles.push({
+                Format: 'vtt',
                 Method: 'External'
             });
             profile.SubtitleProfiles.push({
@@ -410,26 +402,6 @@ define(['globalize', 'apphost', 'playbackManager', 'pluginManager', 'events', 'e
                 default:
                     break;
             }
-            var fontFamily;
-            switch (subtitleAppearanceSettings.font || '') {
-
-                case 'smallcaps':
-                case 'typewriter':
-                case 'console':
-                    fontFamily = 'monospace';
-                    break;
-                case 'print':
-                    fontFamily = 'Times New Roman';
-                    break;
-                case 'cursive':
-                    fontFamily = 'cursive';
-                    break;
-                case 'casual':
-                    fontFamily = 'Comic Sans MS';
-                    break;
-                default:
-                    break;
-            }
 
             var requestBody = {
                 path: url,
@@ -448,28 +420,18 @@ define(['globalize', 'apphost', 'playbackManager', 'pluginManager', 'events', 'e
                     deinterlace: appSettings.get('mpv-deinterlace'),
                     hwdec: appSettings.get('mpv-hwdec'),
                     upmixAudioFor: appSettings.get('mpv-upmixaudiofor'),
-                    scale: appSettings.get('mpv-scale'),
-                    cscale: appSettings.get('mpv-cscale'),
-                    dscale: appSettings.get('mpv-dscale'),
-                    tscale: appSettings.get('mpv-tscale'),
-                    ditherdepth: appSettings.get('mpv-ditherdepth'),
-                    videoStereoMode: appSettings.get('mpv-videostereomode'),
                     openglhq: appSettings.get('mpv-openglhq') === 'true',
                     exclusiveAudio: appSettings.get('mpv-exclusiveaudio') === 'true',
-                    videoSync: appSettings.get('mpv-videosync') === 'true' ? 'display-resample' : null,
+                    videoSync: appSettings.get('mpv-videosyncmode'),
                     displaySync: appSettings.get('mpv-displaysync') === 'true',
                     displaySync_Override: appSettings.get('mpv-displaysync_override'),
                     interpolation: appSettings.get('mpv-interpolation') === 'true',
-                    correctdownscaling: appSettings.get('mpv-correctdownscaling') === 'true',
-                    sigmoidupscaling: appSettings.get('mpv-sigmoidupscaling') === 'true',
-                    deband: appSettings.get('mpv-deband') === 'true',
                     fullscreen: enableFullscreen,
-                    //genPts: mediaSource.RunTimeTicks ? false : true,
                     audioDelay: parseInt(appSettings.get('mpv-audiodelay') || '0'),
                     audioDelay2325: parseInt(appSettings.get('mpv-audiodelay2325') || 0),
                     largeCache: mediaSource.RunTimeTicks == null || options.item.Type === 'Recording' ? true : false,
                     subtitleFontSize: fontSize,
-                    subtitleFontFamily: fontFamily,
+                    subtitleColor: subtitleAppearanceSettings.textColor && subtitleAppearanceSettings.textColor.indexOf('#') === 0 ? subtitleAppearanceSettings.textColor : null,
                     volume: playerState.volume || 100
                 }
             };
@@ -698,9 +660,9 @@ define(['globalize', 'apphost', 'playbackManager', 'pluginManager', 'events', 'e
             return [
                 { name: '4:3', id: '4_3' },
                 { name: '16:9', id: '16_9' },
-                { name: globalize.translate('sharedcomponents#Auto'), id: 'bestfit' },
-                //{ name: globalize.translate('sharedcomponents#Fill'), id: 'fill' },
-                { name: globalize.translate('sharedcomponents#Original'), id: 'original' }
+                { name: globalize.translate('Auto'), id: 'bestfit' },
+                //{ name: globalize.translate('Fill'), id: 'fill' },
+                { name: globalize.translate('Original'), id: 'original' }
             ];
         };
 
