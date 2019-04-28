@@ -858,8 +858,8 @@
             previousWindowInfo = {};
         }
         var windowOptions = {
-            transparent: true, //supportsTransparency,
-            frame: false,
+            transparent: false, //supportsTransparency,
+            frame: true,
             resizable: true,
             title: 'Jellyfin Theater',
             minWidth: 1280,
