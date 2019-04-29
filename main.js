@@ -7,7 +7,6 @@
 
     var app = electron.app;  // Module to control application life.
     var BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-    var BrowserView = electron.BrowserView;  // Module to create native browser window.
 
     // Keep a global reference of the window object, if you don't, the window will
     // be closed automatically when the JavaScript object is garbage collected.
@@ -140,6 +139,7 @@
     }
 
     function onMinimize() {
+        console.log("onMinimize");
         onWindowStateChanged('Minimized');
     }
 
@@ -155,10 +155,12 @@
     }
 
     function onMaximize() {
+        console.log("onMaximize");
         onWindowStateChanged('Maximized');
     }
 
     function onEnterFullscreen() {
+        console.log("onEnterFullscreen");
         onWindowStateChanged('Fullscreen');
 
         if (initialShowEventsComplete) {
@@ -168,7 +170,7 @@
     }
 
     function onLeaveFullscreen() {
-
+        console.log("onLeaveFullscreen");
         onWindowStateChanged('Normal');
 
         if (initialShowEventsComplete) {
@@ -827,7 +829,6 @@
 
     setCommandLineSwitches();
 
-    var fullscreenOnShow = false;
     var windowShowCount = 0;
     function onWindowShow() {
 
@@ -847,7 +848,6 @@
     // initialization and is ready to create browser windows.
     app.on('ready', function () {
 
-        var isWindows = require('is-windows');
         var windowStatePath = getWindowStateDataPath();
         var enableNodeIntegration = getAppUrl() ? false : true
         var previousWindowInfo;
@@ -858,16 +858,11 @@
             previousWindowInfo = {};
         }
         var windowOptions = {
-            transparent: true, //supportsTransparency,
-            frame: false,
+            frame: true,
             resizable: true,
             title: 'Jellyfin Theater',
             minWidth: 1280,
             minHeight: 720,
-            //alwaysOnTop: true,
-            //skipTaskbar: isWindows() ? false : true,
-
-            //show: false,
             backgroundColor: '#00000000',
             center: true,
             show: false,
